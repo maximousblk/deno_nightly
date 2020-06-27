@@ -47,7 +47,7 @@ chmod +x "$exe"
 mv $exe $bin_dir/deno-nightly
 rm "$exe.zip"
 
-echo "Deno was installed successfully to $exe"
+echo "Deno was installed successfully to $bin_dir/deno-nightly"
 if command -v deno-nightly >/dev/null; then
 	echo "Run 'deno-nightly --help' to get started"
 else
