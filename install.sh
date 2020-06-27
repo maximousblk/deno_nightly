@@ -44,11 +44,12 @@ curl --fail --location --progress-bar --output "$exe.zip" "$deno_uri"
 cd "$bin_dir"
 unzip -o "$exe.zip"
 chmod +x "$exe"
+mv $exe $bin_dir/deno-nightly
 rm "$exe.zip"
 
 echo "Deno was installed successfully to $exe"
-if command -v deno >/dev/null; then
-	echo "Run 'deno --help' to get started"
+if command -v deno-nightly >/dev/null; then
+	echo "Run 'deno-nightly --help' to get started"
 else
 	case $SHELL in
 	/bin/zsh) shell_profile=".zshrc" ;;
