@@ -12,6 +12,10 @@ Nothing in this repository is guaranteed to work. Any loss or harm caused due to
 
 Any issues related to Deno do not belong here. If there is an issue with the build process used in this repo, be my guest.
 
+## Builds
+
+You can find all the builds on the [releases](https://github.com/maximousblk/deno_nightly/releases) page. All builds are tagged by the date they were built. Date format is `YYYY.MM.DD`. There is also a release named `latest` which is updated everyday with the latest build.
+
 ## Install
 
 One-line commands to install Deno Nightly builds on your system.
