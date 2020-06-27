@@ -1,3 +1,5 @@
+#!/bin/sh
+
 set -e
 
 if [ "$(uname -m)" != "x86_64" ]; then
@@ -6,7 +8,7 @@ if [ "$(uname -m)" != "x86_64" ]; then
 fi
 
 if ! command -v unzip >/dev/null; then
-	echo "Error: unzip is required to install Deno (see: https://github.com/denoland/deno_install#unzip-is-required)." 1>&2
+	echo "Error: unzip is required to install Deno (see: https://github.com/maximousblk/deno_nightly#unzip-is-required)." 1>&2
 	exit 1
 fi
 
@@ -18,7 +20,7 @@ esac
 if [ $# -eq 0 ]; then
 	deno_asset_path=$(
 		curl -sSf https://github.com/maximousblk/deno_nightly/releases |
-			grep -o "/denoland/deno/releases/download/.*/deno-${target}\\.zip" |
+			grep -o "/maximousblk/deno_nightly/releases/download/.*/deno-${target}\\.zip" |
 			head -n 1
 	)
 	if [ ! "$deno_asset_path" ]; then
@@ -32,7 +34,7 @@ fi
 
 deno_install="${DENO_INSTALL:-$HOME/.deno}"
 bin_dir="$deno_install/bin"
-exe="$bin_dir/deno-nightly"
+exe="$bin_dir/deno"
 
 if [ ! -d "$bin_dir" ]; then
 	mkdir -p "$bin_dir"
@@ -45,8 +47,8 @@ chmod +x "$exe"
 rm "$exe.zip"
 
 echo "Deno was installed successfully to $exe"
-if command -v deno-nightly >/dev/null; then
-	echo "Run 'deno-nightly --help' to get started"
+if command -v deno >/dev/null; then
+	echo "Run 'deno --help' to get started"
 else
 	case $SHELL in
 	/bin/zsh) shell_profile=".zshrc" ;;
