@@ -1,3 +1,7 @@
+#!/usr/bin/env pwsh
+# Copyright 2018 the Deno authors. All rights reserved. MIT license.
+# TODO(everyone): Keep this script simple and easily auditable.
+
 $ErrorActionPreference = 'Stop'
 
 if ($v) {
@@ -53,6 +57,7 @@ Invoke-WebRequest $DenoUri -OutFile $DenoZip -UseBasicParsing
 
 if (Get-Command Expand-Archive -ErrorAction SilentlyContinue) {
   Expand-Archive $DenoZip -Destination $BinDir -Force
+  Rename-Item -Path "$BinDir\deno.exe" -NewName "deno-nightly.exe"
 } else {
   if (Test-Path $DenoExe) {
     Remove-Item $DenoExe
