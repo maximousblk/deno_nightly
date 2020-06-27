@@ -12,7 +12,7 @@ Any issues related to Deno do not belong here. If there is an issue with the bui
 
 Nothing in this repository is guaranteed to work. Any loss or harm caused due to these binaries is not my responsibility.
 
-> If nothing is guaranteed to work, then who in there right minds would use these builds?
+> If nothing is guaranteed to work, then who in there right mind would use these builds?
 
 nerds.
 
