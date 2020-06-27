@@ -43,7 +43,7 @@ iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
 **With Shell:**
 
 ```sh
-curl -fsSL https://deno.land/x/install/install.sh | sh -s 2020.06.27
+curl -fsSL https://deno-nightly.now.sh/install.sh | sh -s 2020.06.27
 ```
 
 **With PowerShell:**
