@@ -1,0 +1,132 @@
+name: Build and Release
+
+on: 
+  push:
+    paths:
+      - '.github/workflows/release.yml'
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    name: build for ${{ matrix.config.os }}
+    runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        config:
+          - os: ubuntu-latest
+          - os: macOS-latest
+          - os: windows-latest
+
+    env:
+      CARGO_INCREMENTAL: 0
+      RUST_BACKTRACE: full
+
+    steps:
+
+      - name: Get current date
+        uses: 1466587594/get-current-time@v1
+        id: now
+        with:
+          format: YYYY.MM.DD
+
+      - name: Enable long paths on windows
+
+        # Get your shit together windows.
+        # Get it all together. 
+        # And put it in a backpack.
+        # All your shit.
+        # So it’s together.
+        # And if you gotta take it somewhere, take it somewhere,
+        # you know, take it to the shit store and sell it… 
+        # Or put it in a shit museum,
+        # I don’t care what you do, you just gotta get it together.
+        
+        if: startsWith(matrix.config.os, 'windows')
+        run: git config --global core.longpaths true
+
+      - name: Clone repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'denoland/deno'
+          fetch-depth: 1
+          submodules: true
+
+      - name: Install rust
+        uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: 1.44.0
+
+      - name: Log setup config
+        run: |
+          node -v
+          rustc --version
+          cargo --version
+          echo time: ${{ steps.now.outputs.formattedTime }}
+
+      - name: Build release
+        run: cargo build --release --locked --all-targets
+
+      - name: zip linux release
+        if: startsWith(matrix.config.os, 'ubuntu')
+        run: |
+          cd target/release
+          zip -r deno-x86_64-unknown-linux-gnu.zip deno
+
+      - name: Upload linux release to artifacts
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.config.os, 'ubuntu')
+        with:
+          path: target/release/deno-x86_64-unknown-linux-gnu.zip
+
+      - name: zip mac release
+        if: startsWith(matrix.config.os, 'macOS')
+        run: |
+          cd target/release
+          zip -r deno-x86_64-apple-darwin.zip deno
+
+      - name: Upload mac release to artifacts
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.config.os, 'macOS')
+        with:
+          path: target/release/deno-x86_64-apple-darwin.zip
+
+      - name: zip windows release
+        if: startsWith(matrix.config.os, 'windows')
+        run: |
+          cd target/release
+          Compress-Archive -CompressionLevel Optimal -Force -Path deno.exe -DestinationPath deno-x86_64-pc-windows-msvc.zip
+
+      - name: Upload windows release to artifacts
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.config.os, 'windows')
+        with:
+          path: target/release/deno-x86_64-pc-windows-msvc.zip
+
+      - name: Download releases from artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Dated Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ steps.now.outputs.formattedTime }}
+          prerelease: false
+          title: ${{ steps.now.outputs.formattedTime }}
+          files: |
+            artifact/deno-x86_64-pc-windows-msvc.zip
+            artifact/deno-x86_64-unknown-linux-gnu.zip
+            artifact/deno-x86_64-apple-darwin.zip
+
+      - name: Latest Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: latest
+          prerelease: true
+          title: latest
+          files: |
+            artifact/deno-x86_64-pc-windows-msvc.zip
+            artifact/deno-x86_64-unknown-linux-gnu.zip
+            artifact/deno-x86_64-apple-darwin.zip
