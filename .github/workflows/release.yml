@@ -9,15 +9,12 @@ on:
 
 jobs:
   build:
-    name: build for ${{ matrix.config.os }}
-    runs-on: ${{ matrix.config.os }}
+    name: build for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     strategy:
       matrix:
-        config:
-          - os: ubuntu-latest
-          - os: macOS-latest
-          - os: windows-latest
+        os: [macOS-latest, windows-latest, ubuntu-latest]
 
     env:
       CARGO_INCREMENTAL: 0
@@ -43,7 +40,7 @@ jobs:
         # Or put it in a shit museum,
         # I don’t care what you do, you just gotta get it together.
         
-        if: startsWith(matrix.config.os, 'windows')
+        if: startsWith(matrix.os, 'windows')
         run: git config --global core.longpaths true
 
       - name: Clone repository
@@ -69,38 +66,38 @@ jobs:
         run: cargo build --release --locked --all-targets
 
       - name: zip linux release
-        if: startsWith(matrix.config.os, 'ubuntu')
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
           cd target/release
           zip -r deno-x86_64-unknown-linux-gnu.zip deno
 
       - name: Upload linux release to artifacts
         uses: actions/upload-artifact@v2
-        if: startsWith(matrix.config.os, 'ubuntu')
+        if: startsWith(matrix.os, 'ubuntu')
         with:
           path: target/release/deno-x86_64-unknown-linux-gnu.zip
 
       - name: zip mac release
-        if: startsWith(matrix.config.os, 'macOS')
+        if: startsWith(matrix.os, 'macOS')
         run: |
           cd target/release
           zip -r deno-x86_64-apple-darwin.zip deno
 
       - name: Upload mac release to artifacts
         uses: actions/upload-artifact@v2
-        if: startsWith(matrix.config.os, 'macOS')
+        if: startsWith(matrix.os, 'macOS')
         with:
           path: target/release/deno-x86_64-apple-darwin.zip
 
       - name: zip windows release
-        if: startsWith(matrix.config.os, 'windows')
+        if: startsWith(matrix.os, 'windows')
         run: |
           cd target/release
           Compress-Archive -CompressionLevel Optimal -Force -Path deno.exe -DestinationPath deno-x86_64-pc-windows-msvc.zip
 
       - name: Upload windows release to artifacts
         uses: actions/upload-artifact@v2
-        if: startsWith(matrix.config.os, 'windows')
+        if: startsWith(matrix.os, 'windows')
         with:
           path: target/release/deno-x86_64-pc-windows-msvc.zip
 
