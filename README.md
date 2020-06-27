@@ -8,9 +8,13 @@ This is an unofficial repository that provides nightly builds for [Deno](https:/
 
 It goes without saying but, **DO NOT** use these binaries in any production environments. They are untested and will most probably have bugs.
 
+Any issues related to Deno do not belong here. If there is an issue with the build process used in this repo, be my guest.
+
 Nothing in this repository is guaranteed to work. Any loss or harm caused due to these binaries is not my responsibility.
 
-Any issues related to Deno do not belong here. If there is an issue with the build process used in this repo, be my guest.
+> If nothing is guaranteed to work, then who in there right minds would use it?
+
+nerds.
 
 ## Builds
 
