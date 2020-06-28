@@ -102,7 +102,7 @@ jobs:
         with:
           path: target/release/deno-x86_64-pc-windows-msvc.zip
 
-      - name: Download releases from artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v2
 
       - name: Dated Release
