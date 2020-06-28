@@ -55,12 +55,13 @@ jobs:
         with:
           rust-version: 1.44.0
 
-      - name: Log setup config
-        run: |
-          node -v
-          rustc --version
-          cargo --version
-          echo time: ${{ steps.now.outputs.formattedTime }}
+      - name: Get commit hash
+        run: git rev-parse HEAD | tee commithash.txt
+
+      - name: Upload commit hash to artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: commithash.txt
 
       - name: Build release
         run: cargo build --release --locked --all-targets
@@ -105,25 +106,19 @@ jobs:
         uses: actions/download-artifact@v2
 
       - name: Dated Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: "marvinpinto/action-automatic-releases@v1.0.0"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ steps.now.outputs.formattedTime }}
           prerelease: false
           title: ${{ steps.now.outputs.formattedTime }}
-          files: |
-            artifact/deno-x86_64-pc-windows-msvc.zip
-            artifact/deno-x86_64-unknown-linux-gnu.zip
-            artifact/deno-x86_64-apple-darwin.zip
+          files: artifact/*
 
       - name: Latest Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: "marvinpinto/action-automatic-releases@v1.0.0"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: latest
           prerelease: true
           title: latest
-          files: |
-            artifact/deno-x86_64-pc-windows-msvc.zip
-            artifact/deno-x86_64-unknown-linux-gnu.zip
-            artifact/deno-x86_64-apple-darwin.zip
+          files: artifact/*
