@@ -51,12 +51,12 @@ jobs:
           submodules: true
 
       - name: Get commit hash
-        run: git rev-parse HEAD | tee commithash.txt
+        run: git rev-parse HEAD | tee commithash
 
       - name: Upload commit hash to artifacts
         uses: actions/upload-artifact@v2
         with:
-          path: commithash.txt
+          path: commithash
 
       - name: Install rust
         uses: hecrj/setup-rust-action@v1
