@@ -50,11 +50,6 @@ jobs:
           fetch-depth: 1
           submodules: true
 
-      - name: Install rust
-        uses: hecrj/setup-rust-action@v1
-        with:
-          rust-version: 1.44.0
-
       - name: Get commit hash
         run: git rev-parse HEAD | tee commithash.txt
 
@@ -62,6 +57,11 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: commithash.txt
+
+      - name: Install rust
+        uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: 1.44.0
 
       - name: Build release
         run: cargo build --release --locked --all-targets
