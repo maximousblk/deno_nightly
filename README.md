@@ -24,7 +24,7 @@ You can find all the builds on the [releases](https://github.com/maximousblk/den
 
 One-line commands to install Deno Nightly builds on your system.
 
-## Install Latest Build
+#### Install Latest Build
 
 **With Shell:**
 
@@ -38,7 +38,7 @@ curl -fsSL https://deno-nightly.now.sh/install.sh | sh
 iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
 ```
 
-## Install Specific Build
+#### Install Specific Build
 
 **With Shell:**
 
@@ -53,7 +53,7 @@ $v="2020.06.27"; iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
 ```
 
 
-## Environment Variables
+### Environment Variables
 
 - `DENO_INSTALL` - The directory in which to install Deno. This defaults to
   `$HOME/.deno`. The executable is placed in `$DENO_INSTALL/bin`. One
@@ -73,13 +73,13 @@ $v="2020.06.27"; iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
   iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
   ```
 
-## Compatibility
+### Compatibility
 
 - The Shell installer can be used on Windows via the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about).
 
-## Known Issues with the install scripts
+### Known Issues with the install scripts
 
-### unzip is required
+#### unzip is required
 
 The program [`unzip`](https://linux.die.net/man/1/unzip) is a requirement for the Shell installer.
 
