@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/README.md"
+      "destination": "https://maximousblk.github.io/deno_nightly/"
     }
   ],
   "cleanUrls": true,
