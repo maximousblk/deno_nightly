@@ -29,13 +29,13 @@ One-line commands to install Deno Nightly builds on your system.
 **With Shell:**
 
 ```sh
-curl -fsSL https://deno-nightly.now.sh/install.sh | sh
+curl -fsSL https://denonightly.now.sh/install.sh | sh
 ```
 
 **With PowerShell:**
 
 ```powershell
-iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
+iwr https://denonightly.now.sh/install.ps1 -useb | iex
 ```
 
 #### Install Specific Build
@@ -43,13 +43,13 @@ iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
 **With Shell:**
 
 ```sh
-curl -fsSL https://deno-nightly.now.sh/install.sh | sh -s 2020.06.27
+curl -fsSL https://denonightly.now.sh/install.sh | sh -s 2020.06.27
 ```
 
 **With PowerShell:**
 
 ```powershell
-$v="2020.06.27"; iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
+$v="2020.06.27"; iwr https://denonightly.now.sh/install.ps1 -useb | iex
 ```
 
 
@@ -62,7 +62,7 @@ $v="2020.06.27"; iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
   **With Shell (`/usr/local`):**
 
   ```sh
-  curl -fsSL https://deno-nightly.now.sh/install.sh | sudo DENO_INSTALL=/usr/local sh
+  curl -fsSL https://denonightly.now.sh/install.sh | sudo DENO_INSTALL=/usr/local sh
   ```
 
   **With PowerShell (`C:\Program Files\deno`):**
@@ -70,7 +70,7 @@ $v="2020.06.27"; iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
   ```powershell
   # Run as administrator:
   $env:DENO_INSTALL = "C:\Program Files\deno"
-  iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
+  iwr https://denonightly.now.sh/install.ps1 -useb | iex
   ```
 
 ### Compatibility
@@ -84,7 +84,7 @@ $v="2020.06.27"; iwr https://deno-nightly.now.sh/install.ps1 -useb | iex
 The program [`unzip`](https://linux.die.net/man/1/unzip) is a requirement for the Shell installer.
 
 ```sh
-$ curl -fsSL https://deno-nightly.now.sh/install.sh | sh
+$ curl -fsSL https://denonightly.now.sh/install.sh | sh
 Error: unzip is required to install Deno (see: https://github.com/maximousblk/deno_nightly#unzip-is-required).
 ```
 
