@@ -72,5 +72,5 @@ if (!(";$Path;".ToLower() -like "*;$BinDir;*".ToLower())) {
   $Env:Path += ";$BinDir"
 }
 
-Write-Output "Deno was installed successfully to $DenoExe"
+Write-Output "Deno (Nightly) was installed successfully to $DenoExe"
 Write-Output "Run 'deno-nightly --help' to get started"
