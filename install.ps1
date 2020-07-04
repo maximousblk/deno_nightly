@@ -27,7 +27,7 @@ $DenoUri = if (!$Version) {
   $Response = Invoke-WebRequest 'https://github.com/maximousblk/deno_nightly/releases' -UseBasicParsing
   if ($PSVersionTable.PSEdition -eq 'Core') {
     $Response.Links |
-      Where-Object { $_.href -like "/maximousblk/deno_nightly/releases/download/*/deno-${Target}.zip" } |
+      Where-Object { $_.href -like "/maximousblk/deno_nightly/releases/download/*/deno-nightly-${Target}.zip" } |
       ForEach-Object { 'https://github.com' + $_.href } |
       Select-Object -First 1
   } else {
@@ -39,12 +39,12 @@ $DenoUri = if (!$Version) {
       $HTMLFile.write($ResponseBytes)
     }
     $HTMLFile.getElementsByTagName('a') |
-      Where-Object { $_.href -like "about:/maximousblk/deno_nightly/releases/download/*/deno-${Target}.zip" } |
+      Where-Object { $_.href -like "about:/maximousblk/deno_nightly/releases/download/*/deno-nightly-${Target}.zip" } |
       ForEach-Object { $_.href -replace 'about:', 'https://github.com' } |
       Select-Object -First 1
   }
 } else {
-  "https://github.com/maximousblk/deno_nightly/releases/download/${Version}/deno-${Target}.zip"
+  "https://github.com/maximousblk/deno_nightly/releases/download/${Version}/deno-nightly-${Target}.zip"
 }
 
 if (!(Test-Path $BinDir)) {
@@ -55,7 +55,6 @@ Invoke-WebRequest $DenoUri -OutFile $DenoZip -UseBasicParsing
 
 if (Get-Command Expand-Archive -ErrorAction SilentlyContinue) {
   Expand-Archive $DenoZip -Destination $BinDir -Force
-  Rename-Item -Path "$BinDir\deno.exe" -NewName "deno-nightly.exe"
 } else {
   if (Test-Path $DenoExe) {
     Remove-Item $DenoExe
