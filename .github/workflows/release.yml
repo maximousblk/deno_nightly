@@ -64,43 +64,48 @@ jobs:
           rust-version: 1.44.0
 
       - name: Build release
-        run: cargo build --release --locked --all-targets
+        run: |
+          cargo build --release --locked --all-targets
+          ls target/release
 
       - name: zip linux release
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           cd target/release
-          zip -r deno-x86_64-unknown-linux-gnu.zip deno
+          mv deno deno-nightly
+          zip -r deno-nightly-x86_64-unknown-linux-gnu.zip deno-nightly
 
       - name: Upload linux release to artifacts
         uses: actions/upload-artifact@v2
         if: startsWith(matrix.os, 'ubuntu')
         with:
-          path: target/release/deno-x86_64-unknown-linux-gnu.zip
+          path: target/release/deno-nightly-x86_64-unknown-linux-gnu.zip
 
       - name: zip mac release
         if: startsWith(matrix.os, 'macOS')
         run: |
           cd target/release
-          zip -r deno-x86_64-apple-darwin.zip deno
+          mv deno deno-nightly
+          zip -r deno-nightly-x86_64-apple-darwin.zip deno-nightly
 
       - name: Upload mac release to artifacts
         uses: actions/upload-artifact@v2
         if: startsWith(matrix.os, 'macOS')
         with:
-          path: target/release/deno-x86_64-apple-darwin.zip
+          path: target/release/deno-nightly-x86_64-apple-darwin.zip
 
       - name: zip windows release
         if: startsWith(matrix.os, 'windows')
         run: |
           cd target/release
-          Compress-Archive -CompressionLevel Optimal -Force -Path deno.exe -DestinationPath deno-x86_64-pc-windows-msvc.zip
+          Rename-Item -Path "deno.exe" -NewName "deno-nightly.exe"
+          Compress-Archive -CompressionLevel Optimal -Force -Path deno-nightly.exe -DestinationPath deno-nightly-x86_64-pc-windows-msvc.zip
 
       - name: Upload windows release to artifacts
         uses: actions/upload-artifact@v2
         if: startsWith(matrix.os, 'windows')
         with:
-          path: target/release/deno-x86_64-pc-windows-msvc.zip
+          path: target/release/deno-nightly-x86_64-pc-windows-msvc.zip
 
       - name: Download artifacts
         uses: actions/download-artifact@v2
