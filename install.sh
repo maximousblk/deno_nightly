@@ -20,7 +20,7 @@ esac
 if [ $# -eq 0 ]; then
 	deno_asset_path=$(
 		curl -sSf https://github.com/maximousblk/deno_nightly/releases |
-			grep -o "/maximousblk/deno_nightly/releases/download/.*/deno-${target}\\.zip" |
+			grep -o "/maximousblk/deno_nightly/releases/download/.*/deno-nightly-${target}\\.zip" |
 			head -n 1
 	)
 	if [ ! "$deno_asset_path" ]; then
@@ -29,12 +29,12 @@ if [ $# -eq 0 ]; then
 	fi
 	deno_uri="https://github.com${deno_asset_path}"
 else
-	deno_uri="https://github.com/maximousblk/deno_nightly/releases/download/${1}/deno-${target}.zip"
+	deno_uri="https://github.com/maximousblk/deno_nightly/releases/download/${1}/deno-nightly-${target}.zip"
 fi
 
 deno_install="${DENO_INSTALL:-$HOME/.deno}"
 bin_dir="$deno_install/bin"
-exe="$bin_dir/deno"
+exe="$bin_dir/deno-nightly"
 
 if [ ! -d "$bin_dir" ]; then
 	mkdir -p "$bin_dir"
@@ -44,7 +44,6 @@ curl --fail --location --progress-bar --output "$exe.zip" "$deno_uri"
 cd "$bin_dir"
 unzip -o "$exe.zip"
 chmod +x "$exe"
-mv $exe $bin_dir/deno-nightly
 rm "$exe.zip"
 
 echo "Deno was installed successfully to $bin_dir/deno-nightly"
