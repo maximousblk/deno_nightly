@@ -81,7 +81,7 @@ iwr https://denonightly.now.sh/install.ps1 -useb | iex
 
 ## Known Issues
 
-#### unzip is required
+#### Unzip is required
 
 The program [`unzip`](https://linux.die.net/man/1/unzip) is a requirement for the Shell installer.
 
