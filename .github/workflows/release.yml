@@ -1,9 +1,7 @@
 name: Build and Release
 
 on: 
-  push:
-    paths:
-      - '.github/workflows/release.yml'
+  workflow_dispatch: # manual trigger
   schedule:
     - cron: '0 0 * * *'
 
@@ -74,12 +72,16 @@ jobs:
           cd target/release
           mv deno deno-nightly
           zip -r deno-nightly-x86_64-unknown-linux-gnu.zip deno-nightly
+          ./deno-nightly types > lib.deno-nightly.d.ts
 
       - name: Upload linux release to artifacts
         uses: actions/upload-artifact@v2
         if: startsWith(matrix.os, 'ubuntu')
         with:
-          path: target/release/deno-nightly-x86_64-unknown-linux-gnu.zip
+          path: |
+            target/release/deno-nightly-x86_64-unknown-linux-gnu.zip
+            target/release/lib.deno-nightly.d.ts
+          if-no-files-found: error
 
       - name: zip mac release
         if: startsWith(matrix.os, 'macOS')
@@ -93,6 +95,7 @@ jobs:
         if: startsWith(matrix.os, 'macOS')
         with:
           path: target/release/deno-nightly-x86_64-apple-darwin.zip
+          if-no-files-found: error
 
       - name: zip windows release
         if: startsWith(matrix.os, 'windows')
@@ -106,13 +109,13 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         with:
           path: target/release/deno-nightly-x86_64-pc-windows-msvc.zip
+          if-no-files-found: error
 
       - name: Download artifacts
         uses: actions/download-artifact@v2
 
       - name: Dated Release
-#         uses: "marvinpinto/action-automatic-releases@v1.0.0"
-        uses: "maximousblk/patch-xienm-automatic-releases@v1.0.0-patch.2"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ steps.now.outputs.formattedTime }}
@@ -121,8 +124,7 @@ jobs:
           files: artifact/*
 
       - name: Latest Release
-#         uses: "marvinpinto/action-automatic-releases@v1.0.0"
-        uses: "maximousblk/patch-xienm-automatic-releases@v1.0.0-patch.2"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: latest
