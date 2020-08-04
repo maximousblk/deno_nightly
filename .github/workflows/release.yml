@@ -1,15 +1,15 @@
 name: Build and Release
 
-on: 
+on:
   workflow_dispatch: # manual trigger
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *" # Everyday at ~00:00 UTC
 
 jobs:
-  build:
-    name: build for ${{ matrix.os }}
+  release:
+    name: Build for ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 60 # in case something gets stuck
     strategy:
       matrix:
         os: [macOS-latest, windows-latest, ubuntu-latest]
@@ -19,8 +19,7 @@ jobs:
       RUST_BACKTRACE: full
 
     steps:
-
-      - name: Get current date
+      - name: Get current date # To use as tag
         uses: 1466587594/get-current-time@v1
         id: now
         with:
@@ -29,34 +28,36 @@ jobs:
       - name: Enable long paths on windows
 
         # Get your shit together windows.
-        # Get it all together. 
+        # Get it all together.
         # And put it in a backpack.
         # All your shit.
         # So it’s together.
+
+        if: startsWith(matrix.os, 'windows')
+
         # And if you gotta take it somewhere, take it somewhere,
-        # you know, take it to the shit store and sell it… 
+        # you know, take it to the shit store and sell it…
         # Or put it in a shit museum,
         # I don’t care what you do, you just gotta get it together.
-        
-        if: startsWith(matrix.os, 'windows')
+
         run: git config --global core.longpaths true
 
       - name: Clone repository
         uses: actions/checkout@v2
         with:
-          repository: 'denoland/deno'
-          fetch-depth: 1
+          repository: "denoland/deno"
+          fetch-depth: 1 # No need for version history
           submodules: true
 
-      - name: Get commit hash
-        run: git rev-parse HEAD | tee commithash
+      - name: Get commit hash # For release notes
+        id: commit
+        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
 
-      - name: Upload commit hash to artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          path: commithash
+      - name: Setup Deno
+        if: startsWith(matrix.os, 'ubuntu')
+        uses: denolib/setup-deno@v2.1.0
 
-      - name: Install rust
+      - name: Setup Rust
         uses: hecrj/setup-rust-action@v1
         with:
           rust-version: 1.45.0
@@ -72,15 +73,12 @@ jobs:
           cd target/release
           mv deno deno-nightly
           zip -r deno-nightly-x86_64-unknown-linux-gnu.zip deno-nightly
-          ./deno-nightly types > lib.deno-nightly.d.ts
 
       - name: Upload linux release to artifacts
         uses: actions/upload-artifact@v2
         if: startsWith(matrix.os, 'ubuntu')
         with:
-          path: |
-            target/release/deno-nightly-x86_64-unknown-linux-gnu.zip
-            target/release/lib.deno-nightly.d.ts
+          path: target/release/deno-nightly-x86_64-unknown-linux-gnu.zip
           if-no-files-found: error
 
       - name: zip mac release
@@ -100,7 +98,7 @@ jobs:
       - name: zip windows release
         if: startsWith(matrix.os, 'windows')
         run: |
-          cd target/release
+          Set-Location target/release
           Rename-Item -Path "deno.exe" -NewName "deno-nightly.exe"
           Compress-Archive -CompressionLevel Optimal -Force -Path deno-nightly.exe -DestinationPath deno-nightly-x86_64-pc-windows-msvc.zip
 
@@ -111,23 +109,57 @@ jobs:
           path: target/release/deno-nightly-x86_64-pc-windows-msvc.zip
           if-no-files-found: error
 
+      - name: Export Type Docs
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          cd target/release
+          ./deno-nightly types > lib.deno-nightly.d.ts
+
+      - name: Upload Type Docs to artifacts
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.os, 'ubuntu')
+        with:
+          path: target/release/lib.deno-nightly.d.ts
+          if-no-files-found: error
+
+      - name: Generate Release Notes
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          deno run -A https://denonightly.now.sh/notes -v ${{ steps.now.outputs.formattedTime }} -c ${{ steps.commit.outputs.hash }}
+          deno run -A https://denonightly.now.sh/notes -v latest -c ${{ steps.commit.outputs.hash }}
+
+      - name: Upload Release Notes to artifacts
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.os, 'ubuntu')
+        with:
+          path: |
+            ${{ steps.now.outputs.formattedTime }}.md
+            latest.md
+          if-no-files-found: error
+
       - name: Download artifacts
         uses: actions/download-artifact@v2
 
-      - name: Dated Release
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: ${{ steps.now.outputs.formattedTime }}
-          prerelease: false
-          title: ${{ steps.now.outputs.formattedTime }}
-          files: artifact/*
-
       - name: Latest Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: ncipollo/release-action@v1
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: latest
+          tag: "latest"
+          name: "latest"
           prerelease: true
-          title: latest
-          files: artifact/*
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: "artifact/*"
+          bodyFile: "artifact/${{ steps.now.outputs.formattedTime }}.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dated Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.now.outputs.formattedTime }}
+          name: ${{ steps.now.outputs.formattedTime }}
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: "artifact/*"
+          bodyFile: "artifact/latest.md"
+          token: ${{ secrets.GITHUB_TOKEN }}
