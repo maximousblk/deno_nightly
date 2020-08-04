@@ -148,7 +148,7 @@ jobs:
           prerelease: true
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "artifact/*"
+          artifacts: "artifact/*.zip, artifact/lib.deno-nightly.d.ts"
           bodyFile: "artifact/latest.md"
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -160,6 +160,6 @@ jobs:
           prerelease: false
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "artifact/*"
+          artifacts: "artifact/*.zip, artifact/lib.deno-nightly.d.ts"
           bodyFile: "artifact/${{ steps.now.outputs.formattedTime }}.md"
           token: ${{ secrets.GITHUB_TOKEN }}
