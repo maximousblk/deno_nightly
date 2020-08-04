@@ -3,6 +3,10 @@
     {
       "source": "/(.*)",
       "destination": "/.github"
+    },
+    {
+      "source": "/notes",
+      "destination": "/.github/notes.ts"
     }
   ],
   "cleanUrls": true,
