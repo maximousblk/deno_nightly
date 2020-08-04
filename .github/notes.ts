@@ -19,7 +19,7 @@ if (version && commit2) {
 async function getLastCommit(): Promise<string> {
   const sha1: RegExp = /\b[0-9a-f]{5,40}\b/g;
   const api = await fetch(
-    "https://api.github.com/repos/maximousblk/deno_nightly_area_51/releases/latest",
+    "https://api.github.com/repos/maximousblk/deno_nightly/releases/latest",
   );
 
   const hash: RegExpExecArray | null = sha1.exec((await api.json()).body);
