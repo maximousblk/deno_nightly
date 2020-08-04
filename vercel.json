@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/README.md"
+      "destination": "/.github/README.md"
     }
   ],
   "cleanUrls": true,
