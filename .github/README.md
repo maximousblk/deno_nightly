@@ -1,4 +1,4 @@
-# Deno Nightly
+## Deno Nightly
 
 🌙 Nightly builds for Deno 🦕
 
@@ -24,7 +24,7 @@ You can find all the builds on the [releases](https://github.com/maximousblk/den
 
 One-line commands to install Deno Nightly builds on your system.
 
-#### Install Latest Build
+#### Latest Build
 
 **With Shell:**
 
@@ -38,7 +38,7 @@ curl -fsSL https://denonightly.now.sh/install.sh | sh
 iwr https://denonightly.now.sh/install.ps1 -useb | iex
 ```
 
-#### Install Specific Build
+#### Specific Build
 
 **With Shell:**
 
@@ -55,29 +55,31 @@ $v="2020.06.27"; iwr https://denonightly.now.sh/install.ps1 -useb | iex
 
 ### Environment Variables
 
-- `DENO_INSTALL` - The directory in which to install Deno. This defaults to
-  `$HOME/.deno`. The executable is placed in `$DENO_INSTALL/bin`. One
-  application of this is a system-wide installation:
+#### DENO_INSTALL
 
-  **With Shell (`/usr/local`):**
+The directory in which to install Deno. This defaults to `$HOME/.deno`. The executable is placed in `$DENO_INSTALL/bin`.
 
-  ```sh
-  curl -fsSL https://denonightly.now.sh/install.sh | sudo DENO_INSTALL=/usr/local sh
-  ```
+One application of this is a system-wide installation:
 
-  **With PowerShell (`C:\Program Files\deno`):**
+**With Shell (`/usr/local`):**
 
-  ```powershell
-  # Run as administrator:
-  $env:DENO_INSTALL = "C:\Program Files\deno"
-  iwr https://denonightly.now.sh/install.ps1 -useb | iex
-  ```
+```sh
+curl -fsSL https://denonightly.now.sh/install.sh | sudo DENO_INSTALL=/usr/local sh
+```
+
+**With PowerShell (`C:\Program Files\deno`):**
+
+```powershell
+# Run as administrator:
+$env:DENO_INSTALL = "C:\Program Files\deno"
+iwr https://denonightly.now.sh/install.ps1 -useb | iex
+```
 
 ### Compatibility
 
 - The Shell installer can be used on Windows via the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about).
 
-### Known Issues with the install scripts
+### Known Issues
 
 #### unzip is required
 
