@@ -157,7 +157,7 @@ jobs:
         with:
           tag: ${{ steps.now.outputs.formattedTime }}
           name: ${{ steps.now.outputs.formattedTime }}
-          prerelease: true
+          prerelease: false
           allowUpdates: true
           replacesArtifacts: true
           artifacts: "artifact/*"
