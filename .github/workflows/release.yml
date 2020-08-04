@@ -149,7 +149,7 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           artifacts: "artifact/*"
-          bodyFile: "artifact/${{ steps.now.outputs.formattedTime }}.md"
+          bodyFile: "artifact/latest.md"
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Dated Release
@@ -161,5 +161,5 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           artifacts: "artifact/*"
-          bodyFile: "artifact/latest.md"
+          bodyFile: "artifact/${{ steps.now.outputs.formattedTime }}.md"
           token: ${{ secrets.GITHUB_TOKEN }}
