@@ -55,7 +55,7 @@ $v="2020.06.27"; iwr https://denonightly.now.sh/install.ps1 -useb | iex
 
 ### Environment Variables
 
-#### DENO_INSTALL
+##### DENO_INSTALL
 
 The directory in which to install Deno. This defaults to `$HOME/.deno`. The executable is placed in `$DENO_INSTALL/bin`.
 
@@ -75,11 +75,11 @@ $env:DENO_INSTALL = "C:\Program Files\deno"
 iwr https://denonightly.now.sh/install.ps1 -useb | iex
 ```
 
-### Compatibility
+## Compatibility
 
 - The Shell installer can be used on Windows via the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/about).
 
-### Known Issues
+## Known Issues
 
 #### unzip is required
 
