@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/.github"
-    },
-    {
       "source": "/notes",
       "destination": "/.github/notes.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/.github"
     }
   ],
   "cleanUrls": true,
