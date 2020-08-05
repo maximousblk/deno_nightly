@@ -48,7 +48,7 @@ function template(version: string, commit2: string): string {
 **With Shell:**
 
 \`\`\`sh
-curl -fsSL ${sh}${version === "latest" ? "" : ` | sh -s ${version}`}
+curl -fsSL ${sh} | sh${version === "latest" ? "" : ` -s ${version}`}
 \`\`\`
 
 **With PowerShell:**
