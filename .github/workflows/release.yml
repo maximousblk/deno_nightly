@@ -32,14 +32,12 @@ jobs:
         # And put it in a backpack.
         # All your shit.
         # So it’s together.
-
-        if: startsWith(matrix.os, 'windows')
-
         # And if you gotta take it somewhere, take it somewhere,
         # you know, take it to the shit store and sell it…
         # Or put it in a shit museum,
         # I don’t care what you do, you just gotta get it together.
 
+        if: startsWith(matrix.os, 'windows')
         run: git config --global core.longpaths true
 
       - name: Clone repository
@@ -56,6 +54,8 @@ jobs:
       - name: Setup Deno
         if: startsWith(matrix.os, 'ubuntu')
         uses: denolib/setup-deno@v2.1.0
+        with:
+          deno-version: v1.2.2
 
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v1
