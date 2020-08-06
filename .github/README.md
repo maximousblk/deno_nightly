@@ -2,19 +2,11 @@
 
 🌙 Nightly builds for Deno 🦕
 
-###### HERE BE DRAGONS
+If you are a module author or have been using Deno for a while you may have noticed updates unexpectedly breaking your applications. I believe this is done to avoid development of a bad standard and inability to fix it in the future.
+Whatever the reason may be, your applications break because of these updates and you don't like it. Well, wouldn't it be amazing if you could somehow know about these changes before the update?
+You can use these nightly builds to test your applications for future breaking. This way you can know what part of your application will break in the next update and prepare a fix before the official release.
 
-This is an unofficial repository that provides nightly builds for [Deno](https://deno.land/).
 
-It goes without saying but, **DO NOT** use these binaries in any production environments. They are untested and will most probably have bugs.
-
-Any issues related to Deno do not belong here. If there is an issue with the build process used in this repo, be my guest.
-
-Nothing in this repository is guaranteed to work. Any loss or harm caused due to these binaries is not my responsibility.
-
-> If nothing is guaranteed to work, then who in there right mind would use these builds?
-
-nerds.
 
 ## Builds
 
@@ -52,12 +44,26 @@ curl -fsSL https://denonightly.now.sh/install.sh | sh -s 2020.06.27
 $v="2020.06.27"; iwr https://denonightly.now.sh/install.ps1 -useb | iex
 ```
 
+### GitHub Actions
+
+You can use Deno Nightly builds to setup an automated test for your applications using [setup-deno](https://github.com/denolib/setup-deno) action.
+
+```yml
+steps:
+  - uses: actions/checkout@v2
+  - uses: denolib/setup-deno@v2.1.0
+    with:
+      deno-version: nightly
+  - run: |
+      deno --version
+      deno run https://deno.land/std/examples/welcome.ts
+```
 
 ### Environment Variables
 
 ##### DENO_INSTALL
 
-The directory in which to install Deno. This defaults to `$HOME/.deno`. The executable is placed in `$DENO_INSTALL/bin`.
+The directory in which to install Deno. This defaults to `$HOME/.deno`. The executable is placed in `$DENO_INSTALL/bin`
 
 One application of this is a system-wide installation:
 
@@ -65,7 +71,7 @@ One application of this is a system-wide installation:
 
 ```sh
 curl -fsSL https://denonightly.now.sh/install.sh | sudo DENO_INSTALL=/usr/local sh
-```
+````
 
 **With PowerShell (`C:\Program Files\deno`):**
 
@@ -97,6 +103,14 @@ During the `install.sh` process, `unzip` is used to extract the zip archive.
 **How can this issue be fixed?**
 
 You can install unzip via `brew install unzip` on MacOS or `apt-get install unzip -y` on Linux.
+
+## Disclaimer
+
+This is an unofficial repository that provides nightly builds for [Deno](https://deno.land/).
+
+It goes without saying but, **DO NOT** use these binaries in any production environments. They are untested and will probably have bugs.
+
+Any issues related to Deno do not belong here. If there is an issue with the build process used in this repo, be my guest.
 
 ## License
 
