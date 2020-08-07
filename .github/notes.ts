@@ -4,9 +4,9 @@ import { parse } from "https://deno.land/std@0.63.0/flags/mod.ts";
 // PROPS
 const token: string = parse(Deno.args).t;
 const build: string = parse(Deno.args).b;
-const notes: string = template(build, basecommit, headcommit);
 const headcommit: string = parse(Deno.args).h;
 const basecommit: string = await getLastCommit();
+const notes: string = template(build, basecommit, headcommit);
 
 // DEBUG
 console.log("v:", build);
