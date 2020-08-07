@@ -19,6 +19,8 @@ jobs:
       RUST_BACKTRACE: full
 
     steps:
+      # SETUP
+
       - name: Get current date # To use as tag
         uses: 1466587594/get-current-time@v1
         id: now
@@ -44,12 +46,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: "denoland/deno"
-          fetch-depth: 1 # No need for version history
+          fetch-depth: 1 # No need for full version history
           submodules: true
 
       - name: Get commit hash # For release notes
         id: commit
         run: echo "::set-output name=hash::$(git rev-parse HEAD)"
+
+      # NOTES
 
       - name: Setup Deno
         if: startsWith(matrix.os, 'ubuntu')
@@ -57,85 +61,73 @@ jobs:
         with:
           deno-version: v1.2.2
 
+      - name: Generate Release Notes
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          deno run -A https://denonightly.now.sh/notes -c ${{ steps.commit.outputs.hash }} -t ${{ secrets.GITHUB_TOKEN }} -b ${{ steps.now.outputs.formattedTime }}
+          deno run -A https://denonightly.now.sh/notes -c ${{ steps.commit.outputs.hash }} -t ${{ secrets.GITHUB_TOKEN }} -b latest
+
+      - name: Upload release notes
+        uses: actions/upload-artifact@v2
+        if: startsWith(matrix.os, 'ubuntu')
+        with:
+          name: notes
+          path: |
+            ${{ steps.now.outputs.formattedTime }}.md
+            latest.md
+          if-no-files-found: error
+
+      # BUILD
+
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v1
         with:
           rust-version: 1.45.0
 
-      - name: Build release
-        run: |
-          cargo build --release --locked --all-targets
-          ls target/release
+      - name: Build
+        run: cargo build --release --locked --all-targets
 
-      - name: zip linux release
+      # ZIP
+
+      - name: Zip linux release
         if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          cd target/release
-          mv deno deno-nightly
-          zip -r deno-nightly-x86_64-unknown-linux-gnu.zip deno-nightly
+        working-directory: target/release
+        run: zip -r deno-nightly-x86_64-unknown-linux-gnu.zip deno
 
-      - name: Upload linux release to artifacts
-        uses: actions/upload-artifact@v2
-        if: startsWith(matrix.os, 'ubuntu')
-        with:
-          path: target/release/deno-nightly-x86_64-unknown-linux-gnu.zip
-          if-no-files-found: error
-
-      - name: zip mac release
+      - name: Zip mac release
         if: startsWith(matrix.os, 'macOS')
-        run: |
-          cd target/release
-          mv deno deno-nightly
-          zip -r deno-nightly-x86_64-apple-darwin.zip deno-nightly
+        working-directory: target/release
+        run: zip -r deno-nightly-x86_64-apple-darwin.zip deno
 
-      - name: Upload mac release to artifacts
-        uses: actions/upload-artifact@v2
-        if: startsWith(matrix.os, 'macOS')
-        with:
-          path: target/release/deno-nightly-x86_64-apple-darwin.zip
-          if-no-files-found: error
-
-      - name: zip windows release
+      - name: Zip windows release
         if: startsWith(matrix.os, 'windows')
-        run: |
-          Set-Location target/release
-          Rename-Item -Path "deno.exe" -NewName "deno-nightly.exe"
-          Compress-Archive -CompressionLevel Optimal -Force -Path deno-nightly.exe -DestinationPath deno-nightly-x86_64-pc-windows-msvc.zip
+        working-directory: target/release
+        run: Compress-Archive -CompressionLevel Optimal -Force -Path deno.exe -DestinationPath deno-nightly-x86_64-pc-windows-msvc.zip
 
-      - name: Upload windows release to artifacts
+      # TYPES
+
+      - name: Export Stable Type Docs
+        if: startsWith(matrix.os, 'ubuntu')
+        working-directory: target/release
+        run: ./deno types > lib.deno-nightly.d.ts
+
+      - name: Export Unstable Type Docs
+        if: startsWith(matrix.os, 'ubuntu')
+        working-directory: target/release
+        run: ./deno types --unstable > lib.deno-nightly.unstable.d.ts
+
+      # RELEASE
+
+      - name: Upload release artifacts
         uses: actions/upload-artifact@v2
-        if: startsWith(matrix.os, 'windows')
         with:
-          path: target/release/deno-nightly-x86_64-pc-windows-msvc.zip
-          if-no-files-found: error
-
-      - name: Export Type Docs
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          cd target/release
-          ./deno-nightly types > lib.deno-nightly.d.ts
-
-      - name: Upload Type Docs to artifacts
-        uses: actions/upload-artifact@v2
-        if: startsWith(matrix.os, 'ubuntu')
-        with:
-          path: target/release/lib.deno-nightly.d.ts
-          if-no-files-found: error
-
-      - name: Generate Release Notes
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          deno run -A https://denonightly.now.sh/notes -v ${{ steps.now.outputs.formattedTime }} -c ${{ steps.commit.outputs.hash }}
-          deno run -A https://denonightly.now.sh/notes -v latest -c ${{ steps.commit.outputs.hash }}
-
-      - name: Upload Release Notes to artifacts
-        uses: actions/upload-artifact@v2
-        if: startsWith(matrix.os, 'ubuntu')
-        with:
+          name: release
           path: |
-            ${{ steps.now.outputs.formattedTime }}.md
-            latest.md
-          if-no-files-found: error
+            target/release/deno-nightly-x86_64-unknown-linux-gnu.zip
+            target/release/deno-nightly-x86_64-apple-darwin.zip
+            target/release/deno-nightly-x86_64-pc-windows-msvc.zip
+            target/release/lib.deno-nightly.d.ts
+            target/release/lib.deno-nightly.unstable.d.ts
 
       - name: Download artifacts
         uses: actions/download-artifact@v2
@@ -148,8 +140,8 @@ jobs:
           prerelease: true
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "artifact/*.zip, artifact/lib.deno-nightly.d.ts"
-          bodyFile: "artifact/latest.md"
+          artifacts: "release/*"
+          bodyFile: "notes/latest.md"
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Dated Release
@@ -160,6 +152,6 @@ jobs:
           prerelease: false
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "artifact/*.zip, artifact/lib.deno-nightly.d.ts"
-          bodyFile: "artifact/${{ steps.now.outputs.formattedTime }}.md"
+          artifacts: "release/*"
+          bodyFile: "notes/${{ steps.now.outputs.formattedTime }}.md"
           token: ${{ secrets.GITHUB_TOKEN }}
