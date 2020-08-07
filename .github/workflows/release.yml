@@ -64,8 +64,8 @@ jobs:
       - name: Generate Release Notes
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          deno run -A https://denonightly.now.sh/notes -c ${{ steps.commit.outputs.hash }} -t ${{ secrets.GITHUB_TOKEN }} -b ${{ steps.now.outputs.formattedTime }}
-          deno run -A https://denonightly.now.sh/notes -c ${{ steps.commit.outputs.hash }} -t ${{ secrets.GITHUB_TOKEN }} -b latest
+          deno run -A https://denonightly.now.sh/notes -h ${{ steps.commit.outputs.hash }} -t ${{ secrets.GITHUB_TOKEN }} -b ${{ steps.now.outputs.formattedTime }}
+          deno run -A https://denonightly.now.sh/notes -h ${{ steps.commit.outputs.hash }} -t ${{ secrets.GITHUB_TOKEN }} -b latest
 
       - name: Upload release notes
         uses: actions/upload-artifact@v2
