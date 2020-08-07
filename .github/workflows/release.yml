@@ -2,8 +2,8 @@ name: Build and Release
 
 on:
   workflow_dispatch: # manual trigger
-  # schedule:
-  #   - cron: "0 0 * * *" # Everyday at ~00:00 UTC
+  schedule:
+    - cron: "0 0 * * *" # Everyday at ~00:00 UTC
 
 jobs:
   release:
@@ -53,18 +53,13 @@ jobs:
         id: commit
         run: echo "::set-output name=hash::$(git rev-parse HEAD)"
 
-      - name: Setup Rust
-        uses: hecrj/setup-rust-action@v1
-        with:
-          rust-version: 1.45.0
+      # NOTES
 
       - name: Setup Deno
         if: startsWith(matrix.os, 'ubuntu')
         uses: denolib/setup-deno@v2.1.0
         with:
           deno-version: v1.2.2
-
-      # BUILD
 
       - name: Generate Release Notes
         if: startsWith(matrix.os, 'ubuntu')
@@ -80,9 +75,19 @@ jobs:
           path: |
             ${{ steps.now.outputs.formattedTime }}.md
             latest.md
+          if-no-files-found: error
+
+      # BUILD
+
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: 1.45.0
 
       - name: Build
         run: cargo build --release --locked --all-targets
+
+      # ZIP
 
       - name: Zip linux release
         if: startsWith(matrix.os, 'ubuntu')
@@ -99,6 +104,8 @@ jobs:
         working-directory: target/release
         run: Compress-Archive -CompressionLevel Optimal -Force -Path deno.exe -DestinationPath deno-nightly-x86_64-pc-windows-msvc.zip
 
+      # TYPES
+
       - name: Export Stable Type Docs
         if: startsWith(matrix.os, 'ubuntu')
         working-directory: target/release
@@ -108,6 +115,8 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         working-directory: target/release
         run: ./deno types --unstable > lib.deno-nightly.unstable.d.ts
+
+      # RELEASE
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v2
@@ -119,8 +128,6 @@ jobs:
             target/release/deno-nightly-x86_64-pc-windows-msvc.zip
             target/release/lib.deno-nightly.d.ts
             target/release/lib.deno-nightly.unstable.d.ts
-
-      # RELEASE
 
       - name: Download artifacts
         uses: actions/download-artifact@v2

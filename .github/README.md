@@ -3,10 +3,10 @@
 🌙 Nightly builds for Deno 🦕
 
 If you are a module author or have been using Deno for a while you may have noticed updates unexpectedly breaking your applications. I believe this is done to avoid development of a bad standard and inability to fix it in the future.
+
 Whatever the reason may be, your applications break because of these updates and you don't like it. Well, wouldn't it be amazing if you could somehow know about these changes before the update?
+
 You can use these nightly builds to test your applications for future breaking. This way you can know what part of your application will break in the next update and prepare a fix before the official release.
-
-
 
 ## Builds
 
@@ -71,7 +71,7 @@ One application of this is a system-wide installation:
 
 ```sh
 curl -fsSL https://denonightly.now.sh/install.sh | sudo DENO_INSTALL=/usr/local sh
-````
+```
 
 **With PowerShell (`C:\Program Files\deno`):**
 
@@ -105,6 +105,8 @@ During the `install.sh` process, `unzip` is used to extract the zip archive.
 You can install unzip via `brew install unzip` on MacOS or `apt-get install unzip -y` on Linux.
 
 ## Disclaimer
+
+###### HERE BE DRAGONS
 
 This is an unofficial repository that provides nightly builds for [Deno](https://deno.land/).
 
