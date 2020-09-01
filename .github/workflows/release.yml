@@ -82,7 +82,7 @@ jobs:
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v1
         with:
-          rust-version: 1.45.0
+          rust-version: 1.46.0
 
       - name: Build
         run: cargo build --release --locked --all-targets
