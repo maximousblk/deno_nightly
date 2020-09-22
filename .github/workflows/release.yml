@@ -1,4 +1,4 @@
-name: Build and Release
+name: release
 
 on:
   workflow_dispatch: # manual trigger
@@ -6,21 +6,22 @@ on:
     - cron: "0 0 * * *" # Everyday at ~00:00 UTC
 
 jobs:
-  release:
-    name: Build for ${{ matrix.os }}
+  build:
+    name: build / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60 # in case something gets stuck
     strategy:
       matrix:
-        os: [macOS-latest, windows-latest, ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
 
     env:
       CARGO_INCREMENTAL: 0
       RUST_BACKTRACE: full
 
-    steps:
-      # SETUP
+    outputs:
+      tag: ${{ steps.now.outputs.formattedTime }}
 
+    steps:
       - name: Get current date # To use as tag
         uses: 1466587594/get-current-time@v1
         id: now
@@ -28,17 +29,6 @@ jobs:
           format: YYYY.MM.DD
 
       - name: Enable long paths on windows
-
-        # Get your shit together windows.
-        # Get it all together.
-        # And put it in a backpack.
-        # All your shit.
-        # So it’s together.
-        # And if you gotta take it somewhere, take it somewhere,
-        # you know, take it to the shit store and sell it…
-        # Or put it in a shit museum,
-        # I don’t care what you do, you just gotta get it together.
-
         if: startsWith(matrix.os, 'windows')
         run: git config --global core.longpaths true
 
@@ -52,8 +42,6 @@ jobs:
       - name: Get commit hash # For release notes
         id: commit
         run: echo "::set-output name=hash::$(git rev-parse HEAD)"
-
-      # NOTES
 
       - name: Setup Deno
         if: startsWith(matrix.os, 'ubuntu')
@@ -77,8 +65,6 @@ jobs:
             latest.md
           if-no-files-found: error
 
-      # BUILD
-
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v1
         with:
@@ -86,8 +72,6 @@ jobs:
 
       - name: Build
         run: cargo build --release --locked --all-targets
-
-      # ZIP
 
       - name: Zip linux release
         if: startsWith(matrix.os, 'ubuntu')
@@ -104,8 +88,6 @@ jobs:
         working-directory: target/release
         run: Compress-Archive -CompressionLevel Optimal -Force -Path deno.exe -DestinationPath deno-nightly-x86_64-pc-windows-msvc.zip
 
-      # TYPES
-
       - name: Export Stable Type Docs
         if: startsWith(matrix.os, 'ubuntu')
         working-directory: target/release
@@ -116,9 +98,7 @@ jobs:
         working-directory: target/release
         run: ./deno types --unstable > lib.deno-nightly.unstable.d.ts
 
-      # RELEASE
-
-      - name: Upload release artifacts
+      - name: Upload Builds
         uses: actions/upload-artifact@v2
         with:
           name: release
@@ -129,10 +109,14 @@ jobs:
             target/release/lib.deno-nightly.d.ts
             target/release/lib.deno-nightly.unstable.d.ts
 
-      - name: Download artifacts
+  upload:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download Builds
         uses: actions/download-artifact@v2
 
-      - name: Latest Release
+      - name: latest
         uses: ncipollo/release-action@v1
         with:
           tag: "latest"
@@ -144,14 +128,14 @@ jobs:
           bodyFile: "notes/latest.md"
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Dated Release
+      - name: ${{ needs.build.outputs.tag }}
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.now.outputs.formattedTime }}
-          name: ${{ steps.now.outputs.formattedTime }}
+          tag: ${{ needs.build.outputs.tag }}
+          name: ${{ needs.build.outputs.tag }}
           prerelease: false
           allowUpdates: true
           replacesArtifacts: true
           artifacts: "release/*"
-          bodyFile: "notes/${{ steps.now.outputs.formattedTime }}.md"
+          bodyFile: "notes/${{ needs.build.outputs.tag }}.md"
           token: ${{ secrets.GITHUB_TOKEN }}
