@@ -110,32 +110,25 @@ jobs:
             target/release/lib.deno-nightly.unstable.d.ts
 
   upload:
+    name: upload / ${{ matrix.os }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tag: ["latest", "${{ needs.build.outputs.tag }}"]
+
     needs: build
     steps:
       - name: Download Builds
         uses: actions/download-artifact@v2
 
-      - name: latest
+      - name: ${{ matrix.tag }}
         uses: ncipollo/release-action@v1
         with:
-          tag: "latest"
-          name: "latest"
+          tag: "${{ matrix.tag }}"
+          name: "${{ matrix.tag }}"
           prerelease: true
           allowUpdates: true
           replacesArtifacts: true
           artifacts: "release/*"
-          bodyFile: "notes/latest.md"
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: ${{ needs.build.outputs.tag }}
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ needs.build.outputs.tag }}
-          name: ${{ needs.build.outputs.tag }}
-          prerelease: false
-          allowUpdates: true
-          replacesArtifacts: true
-          artifacts: "release/*"
-          bodyFile: "notes/${{ needs.build.outputs.tag }}.md"
+          bodyFile: "notes/${{ matrix.tag }}.md"
           token: ${{ secrets.GITHUB_TOKEN }}
