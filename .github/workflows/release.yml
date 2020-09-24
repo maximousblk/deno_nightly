@@ -110,7 +110,7 @@ jobs:
             target/release/lib.deno-nightly.unstable.d.ts
 
   upload:
-    name: upload / ${{ matrix.os }}
+    name: upload / ${{ matrix.tag }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
