@@ -9,7 +9,7 @@ jobs:
   build:
     name: build / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60 # in case something gets stuck
+    timeout-minutes: 60
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
@@ -126,7 +126,7 @@ jobs:
         with:
           tag: "${{ matrix.tag }}"
           name: "${{ matrix.tag }}"
-          prerelease: true
+          prerelease: ${{ matrix.tag == "latest" }}
           allowUpdates: true
           replacesArtifacts: true
           artifacts: "release/*"
