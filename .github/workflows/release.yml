@@ -126,7 +126,7 @@ jobs:
         with:
           tag: "${{ matrix.tag }}"
           name: "${{ matrix.tag }}"
-          prerelease: ${{ matrix.tag == "latest" }}
+          prerelease: ${{ matrix.tag == 'latest' }}
           allowUpdates: true
           replacesArtifacts: true
           artifacts: "release/*"
