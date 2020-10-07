@@ -6,32 +6,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <title>Deno Nightly</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🎯</text></svg>">
     <meta property="og:title" content="Deno Nightly" />
     <meta property="og:description" content="🌙 Nightly builds for Deno 🦕">
     <meta property="og:url" content="https://denonightly.now.sh/" />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://repository-images.githubusercontent.com/275379494/1236cd80-0905-11eb-8f4f-c9e21f7fb0f2" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <!-- CSS -->
     <link rel="stylesheet" href="https://unpkg.com/@egoist/docup@1/dist/docup.min.css" />
 </head>
 
 <body>
-    <!-- JS -->
-    <script src="https://unpkg.com/@egoist/docup@1/dist/docup.min.js"></script>
+    <nav><a href="https://github.com/maximousblk/deno_nightly">GitHub</a></nav>
+    <div id="app"></div>
+
     <script>
-        docup.init({
-            title: 'Deno Nightly',
-            root: '/.github',
-            highlightLanguages: ["bash"],
-            theme: 'dark',
-            navLinks: [
-                {
-                    text: "GitHub",
-                    link: "https://github.com/maximousblk/deno_nightly",
-                }
-            ],
-        });
+        if (typeof navigator.serviceWorker !== 'undefined') navigator.serviceWorker.register('sw.js')
     </script>
+
+    <script>
+        window.$docsify = {
+            name: 'Deno Nightly',
+            themeColor: '#AB9DF2',
+            repo: "maximousblk/deno_nightly",
+            maxLevel: 2,
+            auto2top: true,
+        }
+    </script>
+
+    <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
 </body>
 
 </html>
