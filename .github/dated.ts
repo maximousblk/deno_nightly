@@ -62,7 +62,7 @@ async function changelog(
   let lines: string[] = [];
   for (const change of changes) {
     const number: string =
-      `[\`#${change.number}\`](https:/github.com/denoland/deno/pull/${change.number})`;
+      `[\`#${change.number}\`](https://github.com/denoland/deno/pull/${change.number})`;
 
     lines.push(`- ${number} ${change.title}`);
   }
