@@ -3,6 +3,8 @@ const args: Args = parse(Deno.args);
 const build: string = args.b;
 const commit: string = args.h;
 
+console.log({ build, commit })
+
 const upgrade = await Deno.readTextFile("cli/upgrade.rs");
 await Deno.writeTextFile("cli/upgrade.rs", upgrade.replace(`crate::version::DENO`, `"0.0.1"`));
 
