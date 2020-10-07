@@ -11,6 +11,7 @@ jobs:
 
     outputs:
       tag: ${{ steps.now.outputs.formattedTime }}
+      head: ${{ steps.commit.outputs.hash }}
 
     steps:
       - name: Get Date # To use as tag
@@ -31,20 +32,19 @@ jobs:
         run: echo "::set-output name=hash::$(git rev-parse HEAD)"
 
       - name: Setup Deno
-        if: startsWith(matrix.os, 'ubuntu')
         uses: denolib/setup-deno@v2.1.0
         with:
           deno-version: v1.2.2
 
       - name: Generate Release Notes
-        if: startsWith(matrix.os, 'ubuntu')
         run: |
           deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/dated.ts -h ${{ steps.commit.outputs.hash }} -b ${{ steps.now.outputs.formattedTime }}
           deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/latest.ts -h ${{ steps.commit.outputs.hash }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release notes
         uses: actions/upload-artifact@v2
-        if: startsWith(matrix.os, 'ubuntu')
         with:
           name: notes
           path: |
@@ -84,14 +84,12 @@ jobs:
           rust-version: 1.46.0
 
       - name: Setup Deno
-        if: startsWith(matrix.os, 'ubuntu')
         uses: denolib/setup-deno@v2.1.0
         with:
           deno-version: v1.2.2
 
-      - name: Generate Release Notes
-        if: startsWith(matrix.os, 'ubuntu')
-        run: deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/inject.ts -h ${{ steps.commit.outputs.hash }} -b ${{ needs.prep.outputs.tag }}
+      - name: Inject Custom version
+        run: deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/inject.ts -h ${{ needs.prep.outputs.head }} -b ${{ needs.prep.outputs.tag }}
 
       - name: Build
         run: cargo build --release --locked --all-targets
