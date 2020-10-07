@@ -1,16 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/sh",
-      "destination": "/install.sh"
+      "source": "/notes",
+      "destination": "/.github/notes.ts"
     },
     {
-      "source": "/ps1",
-      "destination": "/install.ps1"
-    },
-    {
-      "source": "/",
-      "destination": "/.github/index.html"
+      "source": "/(.*)",
+      "destination": "/.github"
     }
   ],
   "cleanUrls": true,

@@ -6,25 +6,38 @@ on:
     - cron: "0 0 * * *" # Everyday at ~00:00 UTC
 
 jobs:
-  prep:
-    runs-on: ubuntu-latest
+  build:
+    name: build / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    env:
+      CARGO_INCREMENTAL: 0
+      RUST_BACKTRACE: full
 
     outputs:
       tag: ${{ steps.now.outputs.formattedTime }}
 
     steps:
-      - name: Get Date # To use as tag
+      - name: Get current date # To use as tag
         uses: 1466587594/get-current-time@v1
         id: now
         with:
           format: YYYY.MM.DD
+
+      - name: Enable long paths on windows
+        if: startsWith(matrix.os, 'windows')
+        run: git config --global core.longpaths true
 
       - name: Clone repository
         uses: actions/checkout@v2
         with:
           repository: "denoland/deno"
           fetch-depth: 1 # No need for full version history
-          submodules: false
+          submodules: true
 
       - name: Get commit hash # For release notes
         id: commit
@@ -39,8 +52,8 @@ jobs:
       - name: Generate Release Notes
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/dated.ts -h ${{ steps.commit.outputs.hash }} -b ${{ steps.now.outputs.formattedTime }}
-          deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/latest.ts -h ${{ steps.commit.outputs.hash }}
+          deno run -A https://denonightly.now.sh/notes -h ${{ steps.commit.outputs.hash }} -t ${{ secrets.GITHUB_TOKEN }} -b ${{ steps.now.outputs.formattedTime }}
+          deno run -A https://denonightly.now.sh/notes -h ${{ steps.commit.outputs.hash }} -t ${{ secrets.GITHUB_TOKEN }} -b latest
 
       - name: Upload release notes
         uses: actions/upload-artifact@v2
@@ -52,46 +65,10 @@ jobs:
             latest.md
           if-no-files-found: error
 
-  build:
-    name: build / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
-    needs: prep
-
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-
-    env:
-      CARGO_INCREMENTAL: 0
-      RUST_BACKTRACE: full
-
-    steps:
-      - name: Enable long paths on windows
-        if: startsWith(matrix.os, 'windows')
-        run: git config --global core.longpaths true
-
-      - name: Clone repository
-        uses: actions/checkout@v2
-        with:
-          repository: "denoland/deno"
-          fetch-depth: 1 # No need for full version history
-          submodules: true
-
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v1
         with:
           rust-version: 1.46.0
-
-      - name: Setup Deno
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: denolib/setup-deno@v2.1.0
-        with:
-          deno-version: v1.2.2
-
-      - name: Generate Release Notes
-        if: startsWith(matrix.os, 'ubuntu')
-        run: deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/inject.ts -h ${{ steps.commit.outputs.hash }} -b ${{ needs.prep.outputs.tag }}
 
       - name: Build
         run: cargo build --release --locked --all-targets
@@ -132,19 +109,19 @@ jobs:
             target/release/lib.deno-nightly.d.ts
             target/release/lib.deno-nightly.unstable.d.ts
 
-  release:
-    name: release / ${{ matrix.tag }}
-    needs: [prep, build]
+  upload:
+    name: upload / ${{ matrix.tag }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        tag: ["latest", "${{ needs.prep.outputs.tag }}"]
+        tag: ["latest", "${{ needs.build.outputs.tag }}"]
 
+    needs: build
     steps:
       - name: Download Builds
         uses: actions/download-artifact@v2
 
-      - name: Release ${{ matrix.tag }}
+      - name: ${{ matrix.tag }}
         uses: ncipollo/release-action@v1
         with:
           tag: "${{ matrix.tag }}"
