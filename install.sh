@@ -8,7 +8,7 @@ if [ "$(uname -m)" != "x86_64" ]; then
 fi
 
 if ! command -v unzip >/dev/null; then
-  echo "Error: unzip is required to install Deno (Nightly) (see: https://denonightly.now.sh/#/?id=unzip-is-required." 1>&2
+  echo "Error: unzip is required to install Deno (Nightly) (see: 'https://denonightly.now.sh/#/?id=unzip-is-required')." 1>&2
   exit 1
 fi
 

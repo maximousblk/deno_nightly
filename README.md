@@ -51,7 +51,7 @@ You can use Deno Nightly builds to setup an automated test for your applications
 ```yml
 steps:
   - uses: actions/checkout@v2
-  - uses: denolib/setup-deno@v2.1.0
+  - uses: denolib/setup-deno@v2
     with:
       deno-version: nightly
   - run: |
@@ -93,7 +93,7 @@ The program [`unzip`](https://linux.die.net/man/1/unzip) is a requirement for th
 
 ```sh
 $ curl -fsSL https://denonightly.now.sh/sh | sh
-Error: unzip is required to install Deno (see: https://github.com/maximousblk/deno_nightly#unzip-is-required).
+Error: unzip is required to install Deno (see: 'https://denonightly.now.sh/#/?id=unzip-is-required').
 ```
 
 **When does this issue occur?**
@@ -106,7 +106,7 @@ You can install unzip via `brew install unzip` on MacOS or `apt-get install unzi
 
 ## Disclaimer
 
-###### HERE BE DRAGONS
+**HERE BE DRAGONS**
 
 This is an unofficial repository that provides nightly builds for [Deno](https://deno.land/).
 
