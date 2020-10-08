@@ -12,24 +12,13 @@ if ($args.Length -eq 1) {
 $DenoInstall = $env:DENO_INSTALL
 $BinDir = if ($DenoInstall) {
   "$DenoInstall\bin"
-}
-else {
+} else {
   "$Home\.deno\bin"
 }
 
-$DenoExe = "$BinDir\deno-nightly.exe"
+$DenoZip = "$BinDir\deno.zip"
+$DenoExe = "$BinDir\deno.exe"
 $Target = 'x86_64-pc-windows-msvc'
-
-$TmpDir = if ($DenoInstall) {
-  "$DenoInstall\tmp"
-}
-else {
-  "$Home\.deno\tmp"
-}
-
-$TempZip = "$TmpDir\deno.zip"
-$TempExe = "$TmpDir\deno.exe"
-
 
 # GitHub requires TLS 1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -41,13 +30,11 @@ $DenoUri = if (!$Version) {
     Where-Object { $_.href -like "/maximousblk/deno_nightly/releases/download/*/deno-nightly-${Target}.zip" } |
     ForEach-Object { 'https://github.com' + $_.href } |
     Select-Object -First 1
-  }
-  else {
+  } else {
     $HTMLFile = New-Object -Com HTMLFile
     if ($HTMLFile.IHTMLDocument2_write) {
       $HTMLFile.IHTMLDocument2_write($Response.Content)
-    }
-    else {
+    } else {
       $ResponseBytes = [Text.Encoding]::Unicode.GetBytes($Response.Content)
       $HTMLFile.write($ResponseBytes)
     }
@@ -56,8 +43,7 @@ $DenoUri = if (!$Version) {
     ForEach-Object { $_.href -replace 'about:', 'https://github.com' } |
     Select-Object -First 1
   }
-}
-else {
+} else {
   "https://github.com/maximousblk/deno_nightly/releases/download/${Version}/deno-nightly-${Target}.zip"
 }
 
@@ -65,25 +51,19 @@ if (!(Test-Path $BinDir)) {
   New-Item $BinDir -ItemType Directory | Out-Null
 }
 
-if (!(Test-Path $TmpDir)) {
-  New-Item $TmpDir -ItemType Directory | Out-Null
-}
-
-Invoke-WebRequest $DenoUri -OutFile $TempZip -UseBasicParsing
+Invoke-WebRequest $DenoUri -OutFile $DenoZip -UseBasicParsing
 
 if (Get-Command Expand-Archive -ErrorAction SilentlyContinue) {
-  Expand-Archive $TempZip -Destination $TmpDir -Force
-}
-else {
-  if (Test-Path $TempExe) {
-    Remove-Item $TempExe
+  Expand-Archive $DenoZip -Destination $BinDir -Force
+} else {
+  if (Test-Path $DenoExe) {
+    Remove-Item $DenoExe
   }
   Add-Type -AssemblyName System.IO.Compression.FileSystem
-  [IO.Compression.ZipFile]::ExtractToDirectory($TempZip, $TmpDir)
+  [IO.Compression.ZipFile]::ExtractToDirectory($DenoZip, $BinDir)
 }
 
-Move-Item -Path "$TempExe" -Destination "$DenoExe"
-Remove-Item -LiteralPath "$TmpDir" -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item $DenoZip
 
 $User = [EnvironmentVariableTarget]::User
 $Path = [Environment]::GetEnvironmentVariable('Path', $User)
@@ -93,4 +73,4 @@ if (!(";$Path;".ToLower() -like "*;$BinDir;*".ToLower())) {
 }
 
 Write-Output "Deno (Nightly) was installed successfully to $DenoExe"
-Write-Output "Run 'deno-nightly --help' to get started"
+Write-Output "Run 'deno --help' to get started"

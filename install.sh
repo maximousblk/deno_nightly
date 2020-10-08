@@ -8,14 +8,18 @@ if [ "$(uname -m)" != "x86_64" ]; then
 fi
 
 if ! command -v unzip >/dev/null; then
-  echo "Error: unzip is required to install Deno (Nightly) (see: https://github.com/maximousblk/deno_nightly#unzip-is-required)." 1>&2
+  echo "Error: unzip is required to install Deno (Nightly) (see: https://denonightly.now.sh/#/?id=unzip-is-required." 1>&2
   exit 1
 fi
 
-case $(uname -s) in
-Darwin) target="x86_64-apple-darwin" ;;
-*) target="x86_64-unknown-linux-gnu" ;;
-esac
+if [ "$OS" = "Windows_NT" ]; then
+  target="x86_64-pc-windows-msvc"
+else
+  case $(uname -s) in
+  Darwin) target="x86_64-apple-darwin" ;;
+  *) target="x86_64-unknown-linux-gnu" ;;
+  esac
+fi
 
 if [ $# -eq 0 ]; then
   deno_asset_path=$(
@@ -34,28 +38,20 @@ fi
 
 deno_install="${DENO_INSTALL:-$HOME/.deno}"
 bin_dir="$deno_install/bin"
-tmp_dir="$deno_install/tmp"
-tmp_exe="$tmp_dir/deno"
-exe="$bin_dir/deno-nightly"
+exe="$bin_dir/deno"
 
 if [ ! -d "$bin_dir" ]; then
   mkdir -p "$bin_dir"
 fi
 
-if [ ! -d "$tmp_dir" ]; then
-  mkdir -p "$tmp_dir"
-fi
+curl --fail --location --progress-bar --output "$exe.zip" "$deno_uri"
+unzip -d "$bin_dir" -o "$exe.zip"
+chmod +x "$exe"
+rm "$exe.zip"
 
-curl --fail --location --progress-bar --output "$tmp_exe.zip" "$deno_uri"
-cd "$tmp_dir"
-unzip -o "$tmp_exe.zip"
-chmod +x "$tmp_exe"
-mv "$tmp_exe" "$exe"
-rm -rf "$tmp_dir"
-
-echo "Deno (Nightly) was installed successfully to $bin_dir/deno-nightly"
-if command -v deno-nightly >/dev/null; then
-  echo "Run 'deno-nightly --help' to get started"
+echo "Deno (Nightly) was installed successfully to $bin_dir/deno"
+if command -v deno >/dev/null; then
+  echo "Run 'deno --help' to get started"
 else
   case $SHELL in
   /bin/zsh) shell_profile=".zshrc" ;;
@@ -64,5 +60,5 @@ else
   echo "Manually add the directory to your \$HOME/$shell_profile (or similar)"
   echo "  export DENO_INSTALL=\"$deno_install\""
   echo "  export PATH=\"\$DENO_INSTALL/bin:\$PATH\""
-  echo "Run '$bin_dir/deno-nightly --help' to get started"
+  echo "Run '$exe --help' to get started"
 fi
