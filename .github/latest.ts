@@ -85,13 +85,13 @@ ${
 **BASH:**
 
 \`\`\`sh
-curl -fsSL https://denonightly.now.sh/install.sh | sh
+curl -fsSL https://denonightly.now.sh/sh | sh
 \`\`\`
 
 **POWERSHELL:**
 
 \`\`\`ps1
-iwr https://denonightly.now.sh/install.ps1 -useb | iex
+iwr https://denonightly.now.sh/ps1 -useb | iex
 \`\`\`
 
 **GitHub Actions:**

@@ -101,13 +101,13 @@ ${head !== base
 **BASH:**
 
 \`\`\`sh
-curl -fsSL https://denonightly.now.sh/install.sh | sh -s ${tag}
+curl -fsSL https://denonightly.now.sh/sh | sh -s ${tag}
 \`\`\`
 
 **POWERSHELL:**
 
 \`\`\`ps1
-$v="${tag}"; iwr https://denonightly.now.sh/install.ps1 -useb | iex
+$v="${tag}"; iwr https://denonightly.now.sh/ps1 -useb | iex
 \`\`\`
 
 **GitHub Actions:**
