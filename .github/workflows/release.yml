@@ -32,7 +32,7 @@ jobs:
         run: echo "::set-output name=hash::$(git rev-parse HEAD)"
 
       - name: Setup Deno
-        uses: denolib/setup-deno@v2.1.0
+        uses: denolib/setup-deno@v2
         with:
           deno-version: v1.2.2
 
@@ -85,12 +85,12 @@ jobs:
           rust-version: 1.47.0
 
       - name: Setup Deno
-        uses: denolib/setup-deno@v2.1.0
+        uses: denolib/setup-deno@v2
         with:
           deno-version: v1.2.2
 
       - name: Inject Custom version
-        run: deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/inject.ts -h ${{ needs.prep.outputs.head }} -b ${{ needs.prep.outputs.tag }}
+        run: deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/inject.ts -b ${{ needs.prep.outputs.tag }}
 
       - name: Build
         run: cargo build --release --locked --all-targets
