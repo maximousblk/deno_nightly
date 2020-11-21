@@ -4,7 +4,7 @@ const build: string = args.b;
 
 console.log({ build })
 
-const upgrade = await Deno.readTextFile("cli/upgrade.rs");
+const upgrade = await Deno.readTextFile("cli/tools/upgrade.rs");
 await Deno.writeTextFile("cli/tools/upgrade.rs", upgrade.replace(`crate::version::DENO`, `"0.0.1"`));
 
 const data = await Deno.readTextFile("cli/version.rs");
