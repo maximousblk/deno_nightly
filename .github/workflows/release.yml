@@ -79,10 +79,9 @@ jobs:
           fetch-depth: 1 # No need for full version history
           submodules: true
 
-      - name: Setup Rust
-        uses: hecrj/setup-rust-action@v1
+      - uses: actions-rs/toolchain@v1
         with:
-          rust-version: 1.47.0
+          toolchain: 1.48.0
 
       - name: Setup Deno
         uses: denolib/setup-deno@v2
@@ -93,7 +92,10 @@ jobs:
         run: deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/inject.ts -b ${{ needs.prep.outputs.tag }}
 
       - name: Build
-        run: cargo build --release --locked --all-targets
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --locked --all-targets
 
       - name: Zip linux release
         if: startsWith(matrix.os, 'ubuntu')
