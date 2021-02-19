@@ -34,7 +34,7 @@ jobs:
       - name: Setup Deno
         uses: denolib/setup-deno@v2
         with:
-          deno-version: v1.2.2
+          deno-version: v1.7.x
 
       - name: Generate Release Notes
         run: |
@@ -67,6 +67,7 @@ jobs:
     env:
       CARGO_INCREMENTAL: 0
       RUST_BACKTRACE: full
+#     DENO_CANARY: true
 
     steps:
       - name: Enable long paths on windows
