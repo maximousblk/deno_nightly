@@ -38,10 +38,12 @@ jobs:
 
       - name: Generate Release Notes
         run: |
-          deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/dated.ts -h ${{ steps.commit.outputs.hash }} -b ${{ steps.now.outputs.formattedTime }}
-          deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/latest.ts -h ${{ steps.commit.outputs.hash }}
+          deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/notes.ts
+          deno run -A http://denopkg.com/maximousblk/deno_nightly/.github/notes.ts --latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_COMMIT: ${{ steps.commit.outputs.hash }}
+          BUILD_TAG: ${{ steps.now.outputs.formattedTime }}
 
       - name: Upload release notes
         uses: actions/upload-artifact@v2
