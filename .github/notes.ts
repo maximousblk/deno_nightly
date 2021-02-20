@@ -13,7 +13,7 @@ const base = latest
 const head = args.head ?? Deno.env.get("HEAD_COMMIT");
 const diff = `${base?.substring(0, 7)}...${head?.substring(0, 7)}`;
 
-console.log(diff);
+console.log({ tag, latest, base, head, diff });
 
 const { changes } = await getChangeLog(
   "denoland/deno",
