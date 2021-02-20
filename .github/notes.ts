@@ -54,7 +54,7 @@ ${commits}
 - [Stable](https://doc.deno.land/https/github.com/${docs}/lib.deno-nightly.d.ts)
 - [Unstable](https://doc.deno.land/https/github.com/${docs}/lib.deno-nightly.unstable.d.ts)
 
-### INSTALL / UPGRADE
+### Install / Upgrade
 
 **With Shell:**
 
