@@ -5,8 +5,8 @@ import { getNewestTag } from "https://deno.land/x/ghlog@0.3.1/src/utils.ts";
 
 const args = parse(Deno.args);
 
-const tag = args.tags ?? Deno.env.get("BUILD_TAG");
-const latest = tag == "latest";
+const latest = args.latest;
+const tag = latest ? "latest" : args.tags ?? Deno.env.get("BUILD_TAG");
 const base = latest
   ? await getNewestTag("denoland", "deno")
   : await getBaseCommit();
