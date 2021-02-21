@@ -43,7 +43,9 @@ const commits = changes
 
 const docs = `maximousblk/deno_nightly/releases/download/` + tag;
 
-const changelog = `### CHANGELOG
+const changelog = `<!-- ${head} -->
+
+### CHANGELOG
 
 ${commits}
 
