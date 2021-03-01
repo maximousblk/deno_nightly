@@ -75,8 +75,8 @@ ${
 
 \`\`\`yml
 - uses: denolib/setup-deno@v2
-with:
-deno-version: nightly
+  with:
+    deno-version: nightly
 \`\`\`
 `
 }`;
