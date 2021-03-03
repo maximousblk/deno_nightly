@@ -1,7 +1,7 @@
-import { parse } from "https://deno.land/std@0.87.0/flags/mod.ts";
-import { format } from "https://deno.land/std@0.87.0/datetime/mod.ts";
-import { getChangeLog } from "https://deno.land/x/ghlog@0.3.1/mod.ts";
-import { getNewestTag } from "https://deno.land/x/ghlog@0.3.1/src/utils.ts";
+import { parse } from "https://deno.land/std@0.89.0/flags/mod.ts";
+import { format } from "https://deno.land/std@0.89.0/datetime/mod.ts";
+import { getChangeLog } from "https://deno.land/x/ghlog@0.3.2/mod.ts";
+import { getNewestTag } from "https://deno.land/x/ghlog@0.3.2/src/utils.ts";
 
 const args = parse(Deno.args);
 
