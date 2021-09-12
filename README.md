@@ -2,6 +2,8 @@
 
 🌙 Nightly builds for Deno 🦕
 
+> Deprecated in favour of [Deno Canary](https://deno.land/manual@v1.11.0/contributing/release_schedule#canary-channel)
+
 If you are a module author or have been using Deno for a while you may have noticed updates unexpectedly breaking your applications. I believe this is done to avoid development of a bad standard and inability to fix it in the future.
 
 Whatever the reason may be, your applications break because of these updates and you don't like it. Well, wouldn't it be amazing if you could somehow know about these changes before the update?
